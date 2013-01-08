@@ -40,7 +40,7 @@ fi
 
 if [ $showqrcode == 1 ]
 then
-  qrencode -l H -o - $out | display &
+  qrencode -l H -o - $out | display - &
 fi
 
 echo $out
