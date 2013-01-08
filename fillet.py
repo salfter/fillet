@@ -29,7 +29,7 @@ if __name__ == '__main__':
 		help="wallet size, (default=10)", default="10")
 
 	parser.add_option("-p", "--pwpath", dest="pwpath", 
-		help="pywallet.py directory")
+		help="hex2wifaddr.py directory")
 
 	(options, args) = parser.parse_args()
 
@@ -47,7 +47,7 @@ if __name__ == '__main__':
 		print options.file + ", key #" + "%d"%kn + ": " + seckey
 
 		if options.pwpath is not None:
-			a=Popen(options.pwpath + "pywallet.py --info --importhex --importprivkey " + seckey, shell=True, bufsize=-1, stdout=PIPE).stdout
+			a=Popen(options.pwpath + "hex2wifaddr.py " + seckey, shell=True, bufsize=-1, stdout=PIPE).stdout
 			print(a.read())
 			a.close()
 
