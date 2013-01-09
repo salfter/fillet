@@ -10,13 +10,13 @@ options: -p|--private  retrieve private key (default: address)
 EOF
 }
 
-getprivkey=0
+getkey="address"
 showqrcode=0
 OPTS=$(getopt -o pqh --long private,qr,help -- "$@")
 eval set -- "$OPTS"
 while true; do
   case "$1" in
-    -p|--private) getprivkey=1; shift;;
+    -p|--private) getkey="privkey"; shift;;
     -q|--qr)      showqrcode=1; shift;;
     -h|--help)    help; exit 1;;
     --)           shift; break;;
@@ -31,12 +31,7 @@ fi
 
 hexkey=$(python fillet.py --file "$1" --keynumber "$2" --size 1 | sed "s/.*: //")
 
-if [ $getprivkey == 1 ]
-then
-  out=$(python hex2wifaddr.py $hexkey | grep privkey | sed "s/.* //")
-else
-  out=$(python hex2wifaddr.py $hexkey | grep address | sed "s/.* //")
-fi
+out=$(python hex2wifaddr.py $hexkey | grep "$getkey" | sed "s/.* //")
 
 if [ $showqrcode == 1 ]
 then
