@@ -243,7 +243,8 @@ def main(argv=None):
     print "hexkey ", ("00"+hex(secret)[:-1][2:])[-64:]
 
     ### decode privkey to WIF
-    print 'privkey', hex_to_base58("80"+hex(secret)[2:66]+hashlib.sha256(hashlib.sha256(("80"+hex(secret)[2:66]).decode("hex")).hexdigest().decode("hex")).hexdigest()[:8])
+    secret_txt="80"+("0000000000000000000000000000000000000000000000000000000000000000"+hex(secret)[2:][:-1])[-64:]
+    print "privkey", hex_to_base58(secret_txt+hashlib.sha256(hashlib.sha256(secret_txt.decode("hex")).hexdigest().decode("hex")).hexdigest()[:8])
   
     ### retrieve pubkey
     pubkey = Public_key( g, g * secret )
