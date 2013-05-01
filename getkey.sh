@@ -17,7 +17,7 @@ OPTS=$(getopt -o pqhl --long private,qr,help,litecoin -- "$@")
 eval set -- "$OPTS"
 while true; do
   case "$1" in
-    -l|--litecoin) decoder=hex2wifaddr_ltc.py; shift;;
+    -l|--litecoin) decoder="hex2wifaddr.py -l"; shift;;
     -p|--private)  getprivkey=1; shift;;
     -q|--qr)       showqrcode=1; shift;;
     -h|--help)     help; exit 1;;

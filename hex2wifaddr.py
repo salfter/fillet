@@ -5,6 +5,7 @@
 
 import random
 import hashlib
+import getopt
 import sys
 
 class CurveFp( object ):
@@ -194,8 +195,8 @@ def hex_open_key_to_hex_hash160(hex_open_key):
     h160.update(hashlib.sha256(('04'+hex_open_key).decode('hex')).hexdigest().decode('hex'))
     return h160.hexdigest()
     
-def hex_hash160_to_hex_addr_v0(hex_hash160):
-    return '00'+hex_hash160+hashlib.sha256(hashlib.sha256(('00'+hex_hash160).decode('hex')).hexdigest().decode('hex')).hexdigest()[0:8]
+def hex_hash160_to_hex_addr_v0(hex_hash160, version="00"):
+    return version+hex_hash160+hashlib.sha256(hashlib.sha256((version+hex_hash160).decode('hex')).hexdigest().decode('hex')).hexdigest()[0:8]
     
 def hex_addr_v0_to_hex_hash160(hex_addr_v0):
     return hex_addr_v0[2:-8]
@@ -227,23 +228,43 @@ def base58_to_hex(base58):
             break
     return hex_data
 
-def main(argv=None):
-  if argv is None:
-    argv=sys.argv
-    if len(argv)<2:
-      print "Usage: "+argv[0]+" hexkey"
-      sys.exit(2)
+def usage():
+  print "Usage: hex2wifaddr.py [options] hexkey1 hexkey2 ..."
+  print ""
+  print "Options:"
+  print "  -l|--litecoin  decode to Litecoin address"
+  print "  -h|--help      print this help"
+  return;
 
-  i=1
-  while (i<len(argv)):
+def main():
+  version="00"
+  prefix="80"
+
+  try:
+    opts, args = getopt.getopt(sys.argv[1:], "hl", ["help", "litecoin"])
+  except getopt.GetoptError as err:
+    print str(err)
+    usage()
+    sys.exit(2)
+  for o, a in opts:
+    if o in ("-h", "--help"):
+      usage()
+      sys.exit(2)
+    elif o in ("-l", "--litecoin"):
+      version="30"
+      prefix="B0"
+    else:
+      assert False, "unhandled option"
+
+  for a in args:
     ### set privkey
-    secret=int(argv[i],16)
+    secret=int(a,16)
 
     ### echo hexkey
     print "hexkey ", ("00"+hex(secret)[:-1][2:])[-64:]
 
     ### decode privkey to WIF
-    secret_txt="80"+("0000000000000000000000000000000000000000000000000000000000000000"+hex(secret)[2:][:-1])[-64:]
+    secret_txt=prefix+("0000000000000000000000000000000000000000000000000000000000000000"+hex(secret)[2:][:-1])[-64:]
     print "privkey", hex_to_base58(secret_txt+hashlib.sha256(hashlib.sha256(secret_txt.decode("hex")).hexdigest().decode("hex")).hexdigest()[:8])
   
     ### retrieve pubkey
@@ -251,9 +272,7 @@ def main(argv=None):
     hex_open_key=("00"+hex(pubkey.point.x())[:-1][2:])[-64:]+("00"+hex(pubkey.point.y())[:-1][2:])[-64:]
 
     ### print pubkey
-    print "address", hex_to_base58(hex_hash160_to_hex_addr_v0(hex_open_key_to_hex_hash160(hex_open_key)))
-
-    i=i+1
+    print "address", hex_to_base58(hex_hash160_to_hex_addr_v0(hex_open_key_to_hex_hash160(hex_open_key), version))
 
 if __name__ == "__main__":
   sys.exit(main())
