@@ -10,17 +10,19 @@ options: -p|--private  retrieve private key (default: address)
 EOF
 }
 
-getkey="address"
+getprivkey=0
 showqrcode=0
-OPTS=$(getopt -o pqh --long private,qr,help -- "$@")
+decoder=hex2wifaddr.py
+OPTS=$(getopt -o pqhl --long private,qr,help,litecoin -- "$@")
 eval set -- "$OPTS"
 while true; do
   case "$1" in
-    -p|--private) getkey="privkey"; shift;;
-    -q|--qr)      showqrcode=1; shift;;
-    -h|--help)    help; exit 1;;
-    --)           shift; break;;
-    *)            echo Internal error; exit 1;;
+    -l|--litecoin) decoder=hex2wifaddr_ltc.py; shift;;
+    -p|--private)  getprivkey=1; shift;;
+    -q|--qr)       showqrcode=1; shift;;
+    -h|--help)     help; exit 1;;
+    --)            shift; break;;
+    *)             echo Internal error; exit 1;;
   esac
 done
 
@@ -31,7 +33,12 @@ fi
 
 hexkey=$(python fillet.py --file "$1" --keynumber "$2" --size 1 | sed "s/.*: //")
 
-out=$(python hex2wifaddr.py $hexkey | grep "$getkey" | sed "s/.* //")
+if [ $getprivkey == 1 ]
+then
+  out=$(python $decoder $hexkey | grep privkey | sed "s/.* //")
+else
+  out=$(python $decoder $hexkey | grep address | sed "s/.* //")
+fi
 
 if [ $showqrcode == 1 ]
 then

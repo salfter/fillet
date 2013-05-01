@@ -6,16 +6,23 @@ This fork adds a couple of scripts to make fillet.py easier to use:
    faster.  It's mostly cribbed from https://bitcointalk.org/index.php?topic=23241.0.
    I've never really done anything much with Python, so odds are good that the
    parts I've written may be suboptimal.
+
 2) getkey.sh wraps all this up into an easy-to-use utility to retrieve a 
    particular deterministic key, given a file and an index (>0).  You can
    retrieve either the address or the private key.  If you have ImageMagick
    and qrencode installed (and have an X server running), you can have it 
    pop up a QR code.
+
+3) Support for Litecoin addresses has been added.  If I knew more about
+   Python and its implementation of getopt, I would've just fixed
+   hex2wifaddr.py to support both Bitcoin and Litecoin.  Instead, I took the
+   easy route and created hex2wifaddr_ltc.py.  diff will indicate what
+   little needed changing (hint: the prefix for private hex keys is 0x80 for
+   Bitcoin and 0xB0 for Litecoin, and the network version is 0x00 for
+   Bitcoin and 0x30 for Litecoin).
    
- Scott Alfter
- scott@alfter.us
- 8 Jan 13
+Scott Alfter
+scott@alfter.us
+1 May 13
  
- If you found this useful, you can hit the tipjar at 1TipSAXbE6owdU24bcBDJKmL8JRxQe5Yu.
- 
-  
+If you found this useful, you can hit the tipjar at 1TipSAXbE6owdU24bcBDJKmL8JRxQe5Yu.
