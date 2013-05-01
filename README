@@ -3,9 +3,10 @@ This fork adds a couple of scripts to make fillet.py easier to use:
 1) hex2wifaddr.py converts hexadecimal private keys to WIF private keys and
    addresses.  Unlike pywallet.py, it has minimal dependencies (no bsddb, no
    ecdsa, etc.).  For the purposes for which we need it, it's also a fair bit
-   faster.  It's mostly cribbed from https://bitcointalk.org/index.php?topic=23241.0.
-   I've never really done anything much with Python, so odds are good that the
-   parts I've written may be suboptimal.
+   faster.  It's mostly cribbed from 
+   https://bitcointalk.org/index.php?topic=23241.0. I've never really done 
+   anything much with Python, so odds are good that the parts I've written 
+   may be suboptimal.
 
 2) getkey.sh wraps all this up into an easy-to-use utility to retrieve a 
    particular deterministic key, given a file and an index (>0).  You can
@@ -13,16 +14,13 @@ This fork adds a couple of scripts to make fillet.py easier to use:
    and qrencode installed (and have an X server running), you can have it 
    pop up a QR code.
 
-3) Support for Litecoin addresses has been added.  If I knew more about
-   Python and its implementation of getopt, I would've just fixed
-   hex2wifaddr.py to support both Bitcoin and Litecoin.  Instead, I took the
-   easy route and created hex2wifaddr_ltc.py.  diff will indicate what
-   little needed changing (hint: the prefix for private hex keys is 0x80 for
-   Bitcoin and 0xB0 for Litecoin, and the network version is 0x00 for
-   Bitcoin and 0x30 for Litecoin).
+3) Support for Litecoin addresses has been added.  hex2wifaddr.py takes an
+   extra option (-l or --litecoin) to interpret the provided hexkey(s) as
+   Litecoin address(es) instead of Bitcoin address(es).
    
 Scott Alfter
 scott@alfter.us
 1 May 13
  
-If you found this useful, you can hit the tipjar at 1TipSAXbE6owdU24bcBDJKmL8JRxQe5Yu.
+If you found this useful, you can hit the tipjar at 
+1TipSAXbE6owdU24bcBDJKmL8JRxQe5Yu.
