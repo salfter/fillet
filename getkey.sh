@@ -36,7 +36,7 @@ then
   help; exit 1
 fi
 
-hexkey=$((cat wedding.jpg; echo -n 1) | sha256sum | sed "s/ .*//")
+hexkey=$((cat wedding.jpg; echo -n $2) | sha256sum | sed "s/ .*//")
 
 if [ $getprivkey == 1 ]
 then
