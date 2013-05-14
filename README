@@ -17,10 +17,13 @@ This fork adds a couple of scripts to make fillet.py easier to use:
 3) Support for Litecoin addresses has been added.  hex2wifaddr.py takes an
    extra option (-l or --litecoin) to interpret the provided hexkey(s) as
    Litecoin address(es) instead of Bitcoin address(es).
+
+4) Support for compressed addresses has been added.  This works for both
+   Bitcoin and Litecoin addresses.
    
 Scott Alfter
 scott@alfter.us
-1 May 13
+14 May 13
  
 If you found this useful, you can hit the tipjar at 
 1TipSAXbE6owdU24bcBDJKmL8JRxQe5Yu.

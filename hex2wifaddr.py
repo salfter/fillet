@@ -190,9 +190,15 @@ g = generator_256
 
 b58chars = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
 
-def hex_open_key_to_hex_hash160(hex_open_key):
+def hex_open_key_to_hex_hash160(hex_open_key, compressed):
     h160 = hashlib.new('ripemd160')
-    h160.update(hashlib.sha256(('04'+hex_open_key).decode('hex')).hexdigest().decode('hex'))
+    if compressed == False:
+      h160.update(hashlib.sha256(('04'+hex_open_key).decode('hex')).hexdigest().decode('hex'))
+    else:
+      if int(hex_open_key[127:], 16)%2 == 0:
+        h160.update(hashlib.sha256(('02'+hex_open_key[:64]).decode('hex')).hexdigest().decode('hex'))
+      else:
+        h160.update(hashlib.sha256(('03'+hex_open_key[:64]).decode('hex')).hexdigest().decode('hex'))
     return h160.hexdigest()
     
 def hex_hash160_to_hex_addr_v0(hex_hash160, version="00"):
@@ -232,16 +238,18 @@ def usage():
   print "Usage: hex2wifaddr.py [options] hexkey1 hexkey2 ..."
   print ""
   print "Options:"
-  print "  -l|--litecoin  decode to Litecoin address"
-  print "  -h|--help      print this help"
+  print "  -l|--litecoin    decode to Litecoin address"
+  print "  -c|--compressed  get compressed address"
+  print "  -h|--help        print this help"
   return;
 
 def main():
   version="00"
   prefix="80"
+  compressed=False
 
   try:
-    opts, args = getopt.getopt(sys.argv[1:], "hl", ["help", "litecoin"])
+    opts, args = getopt.getopt(sys.argv[1:], "hlc", ["help", "litecoin", "compressed"])
   except getopt.GetoptError as err:
     print str(err)
     usage()
@@ -253,6 +261,8 @@ def main():
     elif o in ("-l", "--litecoin"):
       version="30"
       prefix="B0"
+    elif o in ("-c", "--compressed"):
+      compressed=True
     else:
       assert False, "unhandled option"
 
@@ -265,6 +275,8 @@ def main():
 
     ### decode privkey to WIF
     secret_txt=prefix+("0000000000000000000000000000000000000000000000000000000000000000"+hex(secret)[2:][:-1])[-64:]
+    if compressed == True:
+      secret_txt=secret_txt+"01"
     print "privkey", hex_to_base58(secret_txt+hashlib.sha256(hashlib.sha256(secret_txt.decode("hex")).hexdigest().decode("hex")).hexdigest()[:8])
   
     ### retrieve pubkey
@@ -272,7 +284,7 @@ def main():
     hex_open_key=("00"+hex(pubkey.point.x())[:-1][2:])[-64:]+("00"+hex(pubkey.point.y())[:-1][2:])[-64:]
 
     ### print pubkey
-    print "address", hex_to_base58(hex_hash160_to_hex_addr_v0(hex_open_key_to_hex_hash160(hex_open_key), version))
+    print "address", hex_to_base58(hex_hash160_to_hex_addr_v0(hex_open_key_to_hex_hash160(hex_open_key, compressed), version))
 
 if __name__ == "__main__":
   sys.exit(main())

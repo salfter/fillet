@@ -5,26 +5,31 @@ help()
 cat <<EOF >&2
 Usage: $0 [options] file num
 
-options: -p|--private  retrieve private key (default: address)
-         -q|--qr       display QR code
+options: -p|--private     retrieve private key (default: address)
+	 -c|--compressed  retrieve compressed key/address
+         -q|--qr          display QR code
 EOF
 }
 
 getprivkey=0
 showqrcode=0
-decoder=hex2wifaddr.py
-OPTS=$(getopt -o pqhl --long private,qr,help,litecoin -- "$@")
+compressed=""
+litecoin=""
+OPTS=$(getopt -o pqhlc --long private,qr,help,litecoin,compressed -- "$@")
 eval set -- "$OPTS"
 while true; do
   case "$1" in
-    -l|--litecoin) decoder="hex2wifaddr.py -l"; shift;;
-    -p|--private)  getprivkey=1; shift;;
-    -q|--qr)       showqrcode=1; shift;;
-    -h|--help)     help; exit 1;;
-    --)            shift; break;;
-    *)             echo Internal error; exit 1;;
+    -l|--litecoin)    litecoin=" -l"; shift;;
+    -c|--compressed)  compressed=" -c"; shift;;
+    -p|--private)     getprivkey=1; shift;;
+    -q|--qr)          showqrcode=1; shift;;
+    -h|--help)        help; exit 1;;
+    --)               shift; break;;
+    *)                echo Internal error; exit 1;;
   esac
 done
+
+decoder="hex2wifaddr.py $litecoin $compressed"
 
 if [ $# != 2 ]
 then
